@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Upload Image</h2>
+<mat-dialog-content>
+  <div class="drop-zone" (dragover)="$event.preventDefault()" (drop)="$event.preventDefault()">
+    Drag & Drop your file here or click to upload.
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="closeDialog()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="closeDialog()">Upload</button>
+</mat-dialog-actions>
