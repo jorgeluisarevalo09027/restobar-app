@@ -10,6 +10,16 @@ export class AuthInterceptorService implements HttpInterceptor  {
 
   constructor() { }
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    throw new Error('Method not implemented.');
+    const token = localStorage.getItem('token');
+    if (token) {
+        req = req.clone({
+            setHeaders: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+
+    return next.handle(req)
   }
 }

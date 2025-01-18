@@ -2,10 +2,18 @@ import * as AuthActions from '../actions/auth.actions';
 
 import { createReducer, on } from '@ngrx/store';
 
-import { AuthState } from '../../../shared/interfaces/auth.interface';
+import { UserResponseModel } from '../../../models/user-response.model';
+
+export interface AuthState {
+  user: UserResponseModel |  null,
+  token: string | null,
+  loading: boolean,
+  error: string | null
+}
+
 
 export const initialState: AuthState = {
-  user: null,
+  user:  null,
   token: null,
   loading: false,
   error: null
@@ -21,10 +29,10 @@ export const authReducer = createReducer(
     error: null
   })),
   
-  on(AuthActions.loginSuccess, (state, { user, token }) => ({
+  on(AuthActions.loginSuccess, (state, { response }) => ({
     ...state,
-    user,
-    token,
+    user:response.data,
+    token:response.token,
     loading: false,
     error: null
   })),
@@ -42,9 +50,10 @@ export const authReducer = createReducer(
     error: null
   })),
   
-  on(AuthActions.registerSuccess, (state, { user }) => ({
+  on(AuthActions.registerSuccess, (state, { response }) => ({
     ...state,
-    user,
+    user:response.data,
+    token:response.token,
     loading: false,
     error: null
   })),
