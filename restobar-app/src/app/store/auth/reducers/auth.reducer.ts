@@ -4,6 +4,8 @@ import { createReducer, on } from '@ngrx/store';
 
 import { UserResponseModel } from '../../../models/user-response.model';
 
+export const authStoreStateKey = 'auth';
+
 export interface AuthState {
   user: UserResponseModel |  null,
   token: string | null,

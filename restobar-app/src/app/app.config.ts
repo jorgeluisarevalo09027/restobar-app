@@ -2,6 +2,8 @@ import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { AuthInterceptorService } from './services/auth-interceptor.service';
+import { featurereducers } from './store/reducers-map';
+import { globalEffects } from './store/global-effects';
 import { isDevMode } from '@angular/core';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouter } from '@angular/router';
@@ -13,8 +15,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes),
-    provideStore(), 
-    provideEffects([]),
+    provideStore(featurereducers), 
+    provideEffects(globalEffects),
     provideHttpClient(withInterceptorsFromDi()),
    { provide: HTTP_INTERCEPTORS, 
     useClass: AuthInterceptorService, 

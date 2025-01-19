@@ -1,6 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as authActions from '../../store/auth/actions/auth.actions';
+import * as authSelectors from '../../store/auth/selectors/auth.selectors';
 
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+
+import { AuthState } from '../../store/auth/reducers/auth.reducer';
 import { CommonModule } from '@angular/common';
 import { CreateUserRequestModel } from '../../models/create-user-request.models';
 import { LoginUserRequestModel } from '../../models/login-user-request.model';
@@ -10,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { UsersService } from '../../services/users.service';
 
 @Component({
@@ -24,12 +30,13 @@ import { UsersService } from '../../services/users.service';
   templateUrl: './app-auth.component.html',
   styleUrl: './app-auth.component.scss'
 })
-export class AppAuthComponent implements OnInit {
+export class AppAuthComponent implements OnInit, OnDestroy {
   registerForm: FormGroup;
   loginForm: FormGroup;
-  private httpservice = inject(UsersService);
+  public ngDestroyed$ = new Subject();
+
   
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router , private authStore : Store<AuthState>) {
     
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -42,13 +49,28 @@ export class AppAuthComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
-    
+
   }
+
   ngOnInit(): void {
-    
-    
+    this.authStore
+    .select(authSelectors.selectUser)
+    .pipe(
+      takeUntil(this.ngDestroyed$)
+    )
+    .subscribe((response)=>{
+      if(response) {
+        //this.router.navigate(['/user-images']);
+        console.log(response)
+      }
+    })
     
   }
+
+  ngOnDestroy(): void {
+    this.ngDestroyed$.next(true);
+    this.ngDestroyed$.unsubscribe();
+  }  
 
   onRegister() {
     if (this.registerForm.valid) {
@@ -58,26 +80,20 @@ export class AppAuthComponent implements OnInit {
         name: this.registerForm.controls['name'].value,
         phone:this.registerForm.controls['phone'].value
       })
-      this.httpservice.register(request).subscribe((response)=>{
-        console.log(response);
-      })
-      //this.router.navigate(['/user-images']);
+
+      this.authStore.dispatch(authActions.register({ request }));
+
     }
   }
 
   onLogin() {
     if (this.loginForm.valid) {
       
-      //this.router.navigate(['/user-images']);
       let request = new LoginUserRequestModel({
         email: this.loginForm.controls['email'].value,
         key: this.loginForm.controls['password'].value
       });
-
-      this.httpservice.login(request).subscribe((response )=> {
-        //localStorage.setItem('token', response.token);
-      } )
-      
+      this.authStore.dispatch(authActions.login({request}))
     }
   }
 }
