@@ -1,5 +1,6 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { featurereducers } from './store/reducers-map';
@@ -17,6 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideStore(featurereducers), 
     provideEffects(globalEffects),
+    provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
    { provide: HTTP_INTERCEPTORS, 
     useClass: AuthInterceptorService, 

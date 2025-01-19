@@ -1,7 +1,12 @@
-<mat-toolbar class="custom-toolbar" color="primary">
-   <h1 class="ms-5">
-    Hola, ¿cómo estás, {{ userName }}?
-   </h1> 
+<mat-toolbar class="custom-toolbar">
+  <div class="container-fluid row ">
+    <h1 class="col-md-8 pt-3 ps-5 ">
+     Hola, ¿cómo estás, {{ userName }}?
+    </h1> 
+    <div class=" col-md-4 d-flex flex-row-reverse ">
+      <button mat-raised-button color="accent" >Logout</button>
+    </div>
+  </div>
 </mat-toolbar>
   
   <div class="container mt-5">

@@ -25,7 +25,8 @@ import { UsersService } from '../../services/users.service';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    CommonModule
   ],
   templateUrl: './app-auth.component.html',
   styleUrl: './app-auth.component.scss'
@@ -39,20 +40,23 @@ export class AppAuthComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder, private router: Router , private authStore : Store<AuthState>) {
     
     this.registerForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      name: ['', Validators.required],
-      phone: ['', Validators.required]
+      email: ['', [ Validators.email]],
+      password: ['', [Validators.minLength(6)]],
+      name: ['', ],
+      phone: ['', ]
     });
 
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      email: ['', [ Validators.email]],
+      password: ['', [Validators.minLength(6)]]
     });
 
   }
 
   ngOnInit(): void {
+    this.loginForm.markAsPristine();
+    this.registerForm.markAsPristine();
+    
     this.authStore
     .select(authSelectors.selectUser)
     .pipe(
@@ -60,8 +64,7 @@ export class AppAuthComponent implements OnInit, OnDestroy {
     )
     .subscribe((response)=>{
       if(response) {
-        //this.router.navigate(['/user-images']);
-        console.log(response)
+        this.router.navigate(['/user-images']);
       }
     })
     
@@ -87,6 +90,7 @@ export class AppAuthComponent implements OnInit, OnDestroy {
   }
 
   onLogin() {
+    
     if (this.loginForm.valid) {
       
       let request = new LoginUserRequestModel({
